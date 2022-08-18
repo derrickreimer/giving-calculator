@@ -4,7 +4,7 @@ A simple embeddable JavaScript giving calculator.
 
 ## Usage
 
-First, you'll need to upload the `dist/embed.js` file to your web host (wherever CSS, JavaScript, image, etc. live).
+First, you'll need to upload the [`dist/embed.js` file](https://raw.githubusercontent.com/derrickreimer/giving-calculator/main/dist/embed.js) to your web host (wherever CSS, JavaScript, image, etc. live).
 
 Then, add the following HTML on the page where you'd like to embed the calculator and replace `/path/to/embed.js` with the URL where the script file is hosted:
 
