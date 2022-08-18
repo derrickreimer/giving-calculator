@@ -2,6 +2,8 @@
 
 A simple embeddable JavaScript giving calculator.
 
+Check out the demo here: https://derrickreimer.github.io/giving-calculator/demo.html
+
 ## Usage
 
 First, you'll need to upload the [`dist/embed.js` file](https://raw.githubusercontent.com/derrickreimer/giving-calculator/main/dist/embed.js) to your web host (wherever CSS, JavaScript, image, etc. live).
