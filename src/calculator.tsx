@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import CurrencyInput from "react-currency-input-field";
 
 const years = 3;
 
@@ -50,12 +51,9 @@ const Column = ({ value, currentValue }: ColumnProps) => {
   );
 };
 
-const Row = ({ total, currentTotal, onSelect }: RowProps) => {
+const Row = ({ total, currentTotal }: RowProps) => {
   return (
-    <tr
-      onClick={() => onSelect(total)}
-      className={classNames(total === currentTotal && "row-current")}
-    >
+    <tr className={classNames(total === currentTotal && "row-current")}>
       <Column
         value={total / years / 365}
         currentValue={currentTotal / years / 365}
@@ -75,7 +73,7 @@ const Row = ({ total, currentTotal, onSelect }: RowProps) => {
 };
 
 const Calculator = () => {
-  const [amount, setAmount] = useState(0);
+  const [amount, setAmount] = useState<number>(0);
 
   return (
     <table>
@@ -91,15 +89,25 @@ const Calculator = () => {
       <tbody>
         <tr>
           <td>
-            <input
+            <CurrencyInput
               type="text"
               prefix="$"
               value={amount == 0 ? "" : amount / years / 365}
-              onChange={(e) => {
+              allowNegativeValue={false}
+              decimalsLimit={2}
+              onValueChange={(_value, _name, values) => {
                 console.log("day changed");
-                const value = parseFloat(e.target.value);
 
-                if (isNaN(value)) {
+                if (!values) {
+                  setAmount(0);
+                  return;
+                }
+
+                console.log(values);
+
+                const { float: value } = values;
+
+                if (!value) {
                   setAmount(0);
                 } else {
                   setAmount(value * years * 365);
@@ -108,13 +116,18 @@ const Calculator = () => {
             />
           </td>
           <td>
-            <input
-              type="text"
+            <CurrencyInput
               prefix="$"
               value={amount == 0 ? "" : amount / years / 52}
-              onChange={(e) => {
+              onValueChange={(rawValue) => {
                 console.log("week changed");
-                const value = parseFloat(e.target.value);
+
+                if (!rawValue) {
+                  setAmount(0);
+                  return;
+                }
+
+                const value = parseFloat(rawValue);
 
                 if (isNaN(value)) {
                   setAmount(0);
@@ -125,13 +138,18 @@ const Calculator = () => {
             />
           </td>
           <td>
-            <input
-              type="text"
+            <CurrencyInput
               prefix="$"
               value={amount == 0 ? "" : amount / 3 / 12}
-              onChange={(e) => {
+              onValueChange={(rawValue) => {
                 console.log("month changed");
-                const value = parseFloat(e.target.value);
+
+                if (!rawValue) {
+                  setAmount(0);
+                  return;
+                }
+
+                const value = parseFloat(rawValue);
 
                 if (isNaN(value)) {
                   setAmount(0);
@@ -142,13 +160,18 @@ const Calculator = () => {
             />
           </td>
           <td>
-            <input
-              type="text"
+            <CurrencyInput
               prefix="$"
               value={amount == 0 ? "" : amount / years}
-              onChange={(e) => {
+              onValueChange={(rawValue) => {
                 console.log("year changed");
-                const value = parseFloat(e.target.value);
+
+                if (!rawValue) {
+                  setAmount(0);
+                  return;
+                }
+
+                const value = parseFloat(rawValue);
 
                 if (isNaN(value)) {
                   setAmount(0);
@@ -159,13 +182,18 @@ const Calculator = () => {
             />
           </td>
           <td>
-            <input
-              type="text"
+            <CurrencyInput
               prefix="$"
               value={amount == 0 ? "" : amount}
-              onChange={(e) => {
-                console.log("year changed");
-                const value = parseFloat(e.target.value);
+              onValueChange={(rawValue) => {
+                console.log("total changed");
+
+                if (!rawValue) {
+                  setAmount(0);
+                  return;
+                }
+
+                const value = parseFloat(rawValue);
 
                 if (isNaN(value)) {
                   setAmount(0);
@@ -178,12 +206,7 @@ const Calculator = () => {
         </tr>
 
         {giftLevels.map((total) => (
-          <Row
-            key={total}
-            total={total}
-            currentTotal={amount}
-            onSelect={setAmount}
-          />
+          <Row key={total} total={total} currentTotal={amount} />
         ))}
       </tbody>
     </table>

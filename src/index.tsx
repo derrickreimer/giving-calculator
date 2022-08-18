@@ -1,10 +1,9 @@
 import React from "react";
-import { createRoot } from "react-dom/client";
+import ReactDOM from "react-dom";
 import Calculator from "./calculator";
 
 const container = document.getElementById("giving-calculator");
 
 if (container) {
-  const root = createRoot(container);
-  root.render(<Calculator />);
+  ReactDOM.render(<Calculator />, container);
 }
