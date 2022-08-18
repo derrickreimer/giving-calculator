@@ -143,6 +143,7 @@ const Calculator = ({ years, giftLevels }: CalculatorProps) => {
               allowNegativeValue={false}
               decimalsLimit={2}
               onValueChange={(value) => changeDayValue(value)}
+              className="currency-input"
             />
           </td>
           <td>
@@ -152,6 +153,7 @@ const Calculator = ({ years, giftLevels }: CalculatorProps) => {
               allowNegativeValue={false}
               decimalsLimit={2}
               onValueChange={(value) => changeWeekValue(value)}
+              className="currency-input"
             />
           </td>
           <td>
@@ -161,6 +163,7 @@ const Calculator = ({ years, giftLevels }: CalculatorProps) => {
               allowNegativeValue={false}
               decimalsLimit={2}
               onValueChange={(value) => changeMonthValue(value)}
+              className="currency-input"
             />
           </td>
           <td>
@@ -170,6 +173,7 @@ const Calculator = ({ years, giftLevels }: CalculatorProps) => {
               allowNegativeValue={false}
               decimalsLimit={2}
               onValueChange={(value) => changeYearValue(value)}
+              className="currency-input"
             />
           </td>
           <td>
@@ -179,6 +183,7 @@ const Calculator = ({ years, giftLevels }: CalculatorProps) => {
               allowNegativeValue={false}
               decimalsLimit={2}
               onValueChange={(value) => changeTotalValue(value)}
+              className="currency-input"
             />
           </td>
         </tr>
