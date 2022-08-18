@@ -1,12 +1,6 @@
 import React, { useState } from "react";
 import CurrencyInput from "react-currency-input-field";
 
-const years = 3;
-
-const giftLevels = [
-  150000, 80000, 50000, 35000, 25000, 15000, 7500, 5000, 2500, 1200,
-];
-
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
@@ -44,6 +38,7 @@ const stringifyMoney = (amount: number) => {
 };
 
 interface RowProps {
+  years: number;
   total: number;
   currentTotal: number;
 }
@@ -61,7 +56,7 @@ const Column = ({ value, currentValue }: ColumnProps) => {
   );
 };
 
-const Row = ({ total, currentTotal }: RowProps) => {
+const Row = ({ years, total, currentTotal }: RowProps) => {
   return (
     <tr className={classNames(total === currentTotal && "row-current")}>
       <Column
@@ -82,7 +77,12 @@ const Row = ({ total, currentTotal }: RowProps) => {
   );
 };
 
-const Calculator = () => {
+export interface CalculatorProps {
+  years: number;
+  giftLevels: number[];
+}
+
+const Calculator = ({ years, giftLevels }: CalculatorProps) => {
   const [amount, setAmount] = useState<number>(0);
 
   const [dayValue, setDayValue] = useState<string | undefined>("");
@@ -217,7 +217,7 @@ const Calculator = () => {
         </tr>
 
         {giftLevels.map((total) => (
-          <Row key={total} total={total} currentTotal={amount} />
+          <Row key={total} years={years} total={total} currentTotal={amount} />
         ))}
       </tbody>
     </table>
