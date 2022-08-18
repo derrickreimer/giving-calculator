@@ -1,7 +1,21 @@
 import React, { useState } from "react";
 import CurrencyInput from "react-currency-input-field";
 
-const currencyFormatter = new Intl.NumberFormat("en-US", {
+export interface CalculatorProps {
+  years: number;
+  giftLevels: number[];
+}
+
+interface RowProps {
+  years: number;
+  total: number;
+}
+
+interface ColumnProps {
+  value: number;
+}
+
+const moneyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
 });
@@ -13,78 +27,31 @@ const plainMoneyFormatter = new Intl.NumberFormat("en-US", {
   useGrouping: false,
 });
 
-/**
- * Builds a class name string (and excludes falsey items).
- *
- * @param classes - a list of classes.
- * @returns A class name string.
- */
-export const classNames = (...classes: (string | boolean)[]) => {
-  return classes.filter(Boolean).join(" ");
-};
-
-/**
- * Formats a number as currency.
- *
- * @param amount - the amount to format.
- * @returns A formatted number.
- */
 const formatMoney = (amount: number) => {
-  return currencyFormatter.format(amount);
+  return moneyFormatter.format(amount);
 };
 
 const stringifyMoney = (amount: number) => {
   return plainMoneyFormatter.format(Math.round(amount * 100) / 100);
 };
 
-interface RowProps {
-  years: number;
-  total: number;
-  currentTotal: number;
-}
-
-interface ColumnProps {
-  value: number;
-  currentValue: number;
-}
-
-const Column = ({ value, currentValue }: ColumnProps) => {
-  return (
-    <td className={classNames(currentValue === value && "col-current")}>
-      {formatMoney(value)}
-    </td>
-  );
+const Column = ({ value }: ColumnProps) => {
+  return <td>{formatMoney(value)}</td>;
 };
 
-const Row = ({ years, total, currentTotal }: RowProps) => {
+const Row = ({ years, total }: RowProps) => {
   return (
-    <tr className={classNames(total === currentTotal && "row-current")}>
-      <Column
-        value={total / years / 365}
-        currentValue={currentTotal / years / 365}
-      />
-      <Column
-        value={total / years / 52}
-        currentValue={currentTotal / years / 52}
-      />
-      <Column
-        value={total / years / 12}
-        currentValue={currentTotal / years / 12}
-      />
-      <Column value={total / years} currentValue={currentTotal / years} />
-      <Column value={total} currentValue={currentTotal} />
+    <tr>
+      <Column value={total / years / 365} />
+      <Column value={total / years / 52} />
+      <Column value={total / years / 12} />
+      <Column value={total / years} />
+      <Column value={total} />
     </tr>
   );
 };
 
-export interface CalculatorProps {
-  years: number;
-  giftLevels: number[];
-}
-
 const Calculator = ({ years, giftLevels }: CalculatorProps) => {
-  const [amount, setAmount] = useState<number>(0);
-
   const [dayValue, setDayValue] = useState<string | undefined>("");
   const [weekValue, setWeekValue] = useState<string | undefined>("");
   const [monthValue, setMonthValue] = useState<string | undefined>("");
@@ -160,11 +127,11 @@ const Calculator = ({ years, giftLevels }: CalculatorProps) => {
     <table>
       <thead>
         <tr>
-          <th className="hidden md:table-cell">Per Day</th>
-          <th className="hidden sm:table-cell">Per Week</th>
-          <th className="">Per Month</th>
-          <th className="">Per Year</th>
-          <th className="">Total</th>
+          <th>Per Day</th>
+          <th>Per Week</th>
+          <th>Per Month</th>
+          <th>Per Year</th>
+          <th>Total</th>
         </tr>
       </thead>
       <tbody>
@@ -217,7 +184,7 @@ const Calculator = ({ years, giftLevels }: CalculatorProps) => {
         </tr>
 
         {giftLevels.map((total) => (
-          <Row key={total} years={years} total={total} currentTotal={amount} />
+          <Row key={total} years={years} total={total} />
         ))}
       </tbody>
     </table>
