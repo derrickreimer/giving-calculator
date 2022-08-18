@@ -12,6 +12,13 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
   currency: "USD",
 });
 
+const plainMoneyFormatter = new Intl.NumberFormat("en-US", {
+  style: "decimal",
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+  useGrouping: false,
+});
+
 /**
  * Builds a class name string (and excludes falsey items).
  *
@@ -32,10 +39,13 @@ const formatMoney = (amount: number) => {
   return currencyFormatter.format(amount);
 };
 
+const stringifyMoney = (amount: number) => {
+  return plainMoneyFormatter.format(Math.round(amount * 100) / 100);
+};
+
 interface RowProps {
   total: number;
   currentTotal: number;
-  onSelect: (total: number) => void;
 }
 
 interface ColumnProps {
@@ -75,6 +85,77 @@ const Row = ({ total, currentTotal }: RowProps) => {
 const Calculator = () => {
   const [amount, setAmount] = useState<number>(0);
 
+  const [dayValue, setDayValue] = useState<string | undefined>("");
+  const [weekValue, setWeekValue] = useState<string | undefined>("");
+  const [monthValue, setMonthValue] = useState<string | undefined>("");
+  const [yearValue, setYearValue] = useState<string | undefined>("");
+  const [totalValue, setTotalValue] = useState<string | undefined>("");
+
+  const changeDayValue = (value: string | undefined) => {
+    setDayValue(value);
+
+    const numericValue = Number(value) * years * 365;
+
+    if (!Number.isNaN(numericValue)) {
+      setWeekValue(stringifyMoney(numericValue / years / 52));
+      setMonthValue(stringifyMoney(numericValue / years / 12));
+      setYearValue(stringifyMoney(numericValue / years));
+      setTotalValue(stringifyMoney(numericValue));
+    }
+  };
+
+  const changeWeekValue = (value: string | undefined) => {
+    setWeekValue(value);
+
+    const numericValue = Number(value) * years * 52;
+
+    if (!Number.isNaN(numericValue)) {
+      setDayValue(stringifyMoney(numericValue / years / 365));
+      setMonthValue(stringifyMoney(numericValue / years / 12));
+      setYearValue(stringifyMoney(numericValue / years));
+      setTotalValue(stringifyMoney(numericValue));
+    }
+  };
+
+  const changeMonthValue = (value: string | undefined) => {
+    setMonthValue(value);
+
+    const numericValue = Number(value) * years * 12;
+
+    if (!Number.isNaN(numericValue)) {
+      setDayValue(stringifyMoney(numericValue / years / 365));
+      setWeekValue(stringifyMoney(numericValue / years / 52));
+      setYearValue(stringifyMoney(numericValue / years));
+      setTotalValue(stringifyMoney(numericValue));
+    }
+  };
+
+  const changeYearValue = (value: string | undefined) => {
+    setYearValue(value);
+
+    const numericValue = Number(value) * years;
+
+    if (!Number.isNaN(numericValue)) {
+      setDayValue(stringifyMoney(numericValue / years / 365));
+      setWeekValue(stringifyMoney(numericValue / years / 52));
+      setMonthValue(stringifyMoney(numericValue / years / 12));
+      setTotalValue(stringifyMoney(numericValue));
+    }
+  };
+
+  const changeTotalValue = (value: string | undefined) => {
+    setTotalValue(value);
+
+    const numericValue = Number(value) * years;
+
+    if (!Number.isNaN(numericValue)) {
+      setDayValue(stringifyMoney(numericValue / years / 365));
+      setWeekValue(stringifyMoney(numericValue / years / 52));
+      setMonthValue(stringifyMoney(numericValue / years / 12));
+      setYearValue(stringifyMoney(numericValue / years));
+    }
+  };
+
   return (
     <table>
       <thead>
@@ -90,117 +171,47 @@ const Calculator = () => {
         <tr>
           <td>
             <CurrencyInput
-              type="text"
               prefix="$"
-              value={amount == 0 ? "" : amount / years / 365}
+              value={dayValue}
               allowNegativeValue={false}
               decimalsLimit={2}
-              onValueChange={(_value, _name, values) => {
-                console.log("day changed");
-
-                if (!values) {
-                  setAmount(0);
-                  return;
-                }
-
-                console.log(values);
-
-                const { float: value } = values;
-
-                if (!value) {
-                  setAmount(0);
-                } else {
-                  setAmount(value * years * 365);
-                }
-              }}
+              onValueChange={(value) => changeDayValue(value)}
             />
           </td>
           <td>
             <CurrencyInput
               prefix="$"
-              value={amount == 0 ? "" : amount / years / 52}
-              onValueChange={(rawValue) => {
-                console.log("week changed");
-
-                if (!rawValue) {
-                  setAmount(0);
-                  return;
-                }
-
-                const value = parseFloat(rawValue);
-
-                if (isNaN(value)) {
-                  setAmount(0);
-                } else {
-                  setAmount(value * years * 52);
-                }
-              }}
+              value={weekValue}
+              allowNegativeValue={false}
+              decimalsLimit={2}
+              onValueChange={(value) => changeWeekValue(value)}
             />
           </td>
           <td>
             <CurrencyInput
               prefix="$"
-              value={amount == 0 ? "" : amount / 3 / 12}
-              onValueChange={(rawValue) => {
-                console.log("month changed");
-
-                if (!rawValue) {
-                  setAmount(0);
-                  return;
-                }
-
-                const value = parseFloat(rawValue);
-
-                if (isNaN(value)) {
-                  setAmount(0);
-                } else {
-                  setAmount(value * years * 12);
-                }
-              }}
+              value={monthValue}
+              allowNegativeValue={false}
+              decimalsLimit={2}
+              onValueChange={(value) => changeMonthValue(value)}
             />
           </td>
           <td>
             <CurrencyInput
               prefix="$"
-              value={amount == 0 ? "" : amount / years}
-              onValueChange={(rawValue) => {
-                console.log("year changed");
-
-                if (!rawValue) {
-                  setAmount(0);
-                  return;
-                }
-
-                const value = parseFloat(rawValue);
-
-                if (isNaN(value)) {
-                  setAmount(0);
-                } else {
-                  setAmount(value * years);
-                }
-              }}
+              value={yearValue}
+              allowNegativeValue={false}
+              decimalsLimit={2}
+              onValueChange={(value) => changeYearValue(value)}
             />
           </td>
           <td>
             <CurrencyInput
               prefix="$"
-              value={amount == 0 ? "" : amount}
-              onValueChange={(rawValue) => {
-                console.log("total changed");
-
-                if (!rawValue) {
-                  setAmount(0);
-                  return;
-                }
-
-                const value = parseFloat(rawValue);
-
-                if (isNaN(value)) {
-                  setAmount(0);
-                } else {
-                  setAmount(value);
-                }
-              }}
+              value={totalValue}
+              allowNegativeValue={false}
+              decimalsLimit={2}
+              onValueChange={(value) => changeTotalValue(value)}
             />
           </td>
         </tr>
